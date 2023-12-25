@@ -1,20 +1,19 @@
 // # readme.txt
-// Repository containing codes and details about our Project: School Management Program
+// Repository containing codes and details about our Project: Class Management Program
 
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include <limits>
 
 using namespace std;
 
-const int maxStudents = 100;
-const int maxCourses = 3;
+const int maxStudents = 100;    // Max number of students in class
+const int maxCourses = 3;   // Max number of courses for student
+string adminUsername = "project";     // Admin Login Id
+string adminPassword = "******";  // Admin password
 
-// Admin credentials (hardcoded for simplicity)
-const string adminUsername = "admin";
-const string adminPassword = "password";
 
+// Structure for student details
 struct Student {
     char name[50];
     char regNumber[15];
@@ -22,22 +21,22 @@ struct Student {
     int grades[maxCourses];
 };
 
-bool authenticateAdmin();
-void adminLogin();
-void addStudent(Student students[], int &numStudents);
-void displayStudents(const Student students[], int numStudents);
-void editStudent(Student students[], int numStudents);       
-void deleteStudent(Student students[], int &numStudents);
-void displayStudentDetails(const Student& student);
-void studentLogin(const Student students[], int numStudents);
-void adminFunctionalities(Student students[], int &numStudents);
-void readStudentsFromFile(Student students[], int &numStudents);
+bool authenticateAdmin();   // Takes Input From User and compare it with the correct login id and password
+void adminLogin();      // Confirms the admin login
+void addStudent(Student students[], int &numStudents);      // Fucntion for adding student data
+void displayStudents(const Student students[], int numStudents);    // Function to disply studen data
+void editStudent(Student students[], int numStudents);       // Function to edit student data
+void deleteStudent(Student students[], int &numStudents);    // Function to delete student data
+void displayStudentDetails(const Student& student);     // Function to dislpay student data
+void studentLogin(const Student students[], int numStudents);       // Takes student reg number as input and compare with the reg number already enrolled
+void adminFunctionalities(Student students[], int &numStudents);    // Admin choice Menu and other functions called in here
+void readStudentsFromFile(Student students[], int &numStudents);    // Load data from the file named "student.txt"
 
 int main() {
     Student students[maxStudents];
-    int numStudents = 0; // Initially, there are no students
+    int numStudents = 0; // intial students are zero
 
-    readStudentsFromFile(students, numStudents); // Load student data from file
+    readStudentsFromFile(students, numStudents); // Load student data from file and numStudents = number of student in the file
 
     bool isAdmin = false;
 
@@ -52,9 +51,9 @@ int main() {
 
         switch (choice) {
             case 1:
-                isAdmin = authenticateAdmin();
+                isAdmin = authenticateAdmin(); // Check for admin login
                 if (isAdmin) {
-                    adminFunctionalities(students, numStudents);
+                    adminFunctionalities(students, numStudents); // if Admin Login is correct, Display Admin Menu
                 } else {
                     cout << "Admin login failed.\n";
                 }
@@ -76,24 +75,24 @@ int main() {
 
 
 bool authenticateAdmin() {
-    string username, password;
+    string username, password;  // admin login variables
     cout << "Enter admin username: ";
     cin >> username;
     cout << "Enter admin password: ";
     cin >> password;
 
-    return (username == adminUsername && password == adminPassword);
+    return (username == adminUsername && password == adminPassword); // compare admin login variables
 }
 
 void adminLogin() {
-    bool loggedIn = false;
+    bool loggedIn = false;  // Admin is not logged in
     do {
-        loggedIn = authenticateAdmin();
-        if (!loggedIn) {
+        loggedIn = authenticateAdmin();     // check login details with ids
+        if (!loggedIn) {        // if details are incorrect display error msg
             cout << "Invalid credentials. Try again.\n";
         }
-    } while (!loggedIn);
-    cout << "Admin login successful.\n";
+    } while (!loggedIn);    // Running loop until correct details are not provided
+    cout << "Admin login successful.\n";    // if login detail is correct
 }
 
 void addStudent(Student students[], int &numStudents) {
@@ -286,13 +285,13 @@ void readStudentsFromFile(Student students[], int &numStudents) {
                 inFile.getline(students[numStudents].courses[i], 50, ',');
                 inFile >> students[numStudents].grades[i];
 
-                if (i != maxCourses - 1) {
-                    inFile.ignore(numeric_limits<streamsize>::max(), ',');
-                }
+                // Ignore commas up to 1000 characters before reading the next item
+                // This is a conservative approach to handle potential long lines
+                inFile.ignore(1000, ',');
             }
 
             ++numStudents;
-            inFile.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore end-of-line
+            inFile.ignore(1000, '\n'); // Ignore end-of-line
         }
 
         inFile.close();
