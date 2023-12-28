@@ -15,16 +15,15 @@ string adminPassword = "******";  // Admin password
 
 // Structure for student details
 struct Student {
-    char name[50];
+    char name[50];  //char array max upto 50 char
     char regNumber[15];
     char courses[maxCourses][50];
     int grades[maxCourses];
 };
 
 bool authenticateAdmin();   // Takes Input From User and compare it with the correct login id and password
-void adminLogin();      // Confirms the admin login
 void addStudent(Student students[], int &numStudents);      // Fucntion for adding student data
-void displayStudents(const Student students[], int numStudents);    // Function to disply studen data
+void displayStudents(Student students[], int numStudents);    // Function to disply studen data
 void editStudent(Student students[], int numStudents);       // Function to edit student data
 void deleteStudent(Student students[], int &numStudents);    // Function to delete student data
 void displayStudentDetails(const Student& student);     // Function to dislpay student data
@@ -33,16 +32,17 @@ void adminFunctionalities(Student students[], int &numStudents);    // Admin cho
 void readStudentsFromFile(Student students[], int &numStudents);    // Load data from the file named "student.txt"
 
 int main() {
-    Student students[maxStudents];
+    Student students[maxStudents];  // student structure datatype with variable name student array and size of maxstudent
+                                    // fix memory of 100 student for the array masstudnets
     int numStudents = 0; // intial students are zero
 
     readStudentsFromFile(students, numStudents); // Load student data from file and numStudents = number of student in the file
 
-    bool isAdmin = false;
+    bool isAdmin = false;   // initailly no log in as admin
 
     int choice;
     do {
-        cout << "\nSchool Management System Menu:\n";
+        cout << "\nSchool Management System Menu:\n";   // initiall menu
         cout << "1. Login as Admin\n";
         cout << "2. Login as Student\n";
         cout << "0. Exit\n";
@@ -52,7 +52,7 @@ int main() {
         switch (choice) {
             case 1:
                 isAdmin = authenticateAdmin(); // Check for admin login
-                if (isAdmin) {
+                if (isAdmin) {  // if true
                     adminFunctionalities(students, numStudents); // if Admin Login is correct, Display Admin Menu
                 } else {
                     cout << "Admin login failed.\n";
@@ -84,58 +84,49 @@ bool authenticateAdmin() {
     return (username == adminUsername && password == adminPassword); // compare admin login variables
 }
 
-void adminLogin() {
-    bool loggedIn = false;  // Admin is not logged in
-    do {
-        loggedIn = authenticateAdmin();     // check login details with ids
-        if (!loggedIn) {        // if details are incorrect display error msg
-            cout << "Invalid credentials. Try again.\n";
-        }
-    } while (!loggedIn);    // Running loop until correct details are not provided
-    cout << "Admin login successful.\n";    // if login detail is correct
-}
-
-void addStudent(Student students[], int &numStudents) {
-    if (numStudents < maxStudents) {
+void addStudent(Student students[], int &numStudents) {     // array of student structure   // numStudent = total students
+                                                            // int &numStudent by reference to make actual changes
+    if (numStudents < maxStudents) {    // if students is less than 100
         cin.ignore(); // Clear the input buffer
         cout << "Enter student name: ";
-        cin.getline(students[numStudents].name, 50);
+        cin.getline(students[numStudents].name, 50);    // getline to ignore spaces and max 50 character and save it to name
+                                                        // save students to the index at numStudent 
         cout << "Enter registration number: ";
-        cin >> students[numStudents].regNumber;
+        cin >> students[numStudents].regNumber;         // save reg no to regNumber at index numStudent
 
         cin.ignore(); // Clear the input buffer
-        for (int i = 0; i < maxCourses; ++i) {
+        for (int i = 0; i < maxCourses; ++i) {          // if courses less than 3
             cout << "Enter course " << i + 1 << " name: ";
-            cin.getline(students[numStudents].courses[i], 50);
+            cin.getline(students[numStudents].courses[i], 50);      // save courses to courses [i] at index i
             cout << "Enter grade for course " << students[numStudents].courses[i] << ": ";
-            cin >> students[numStudents].grades[i];
+            cin >> students[numStudents].grades[i];     //save grades at grades[i]
             cin.ignore(); // Clear the input buffer
         }
 
-        numStudents++;
+        numStudents++;  // student added so increment student by one
 
-        ofstream outFile("students.txt", ios::app);
-        if (outFile.is_open()) {
-            outFile << students[numStudents - 1].name << ","
+        ofstream outFile("students.txt", ios::app);     // ofstream class to write to files // save student to student.txt
+        if (outFile.is_open()) {                        // open file
+            outFile << students[numStudents - 1].name << ","    //numStudent - 1 to get the data at that index (array index start at zero)
                     << students[numStudents - 1].regNumber << ",";
             for (int i = 0; i < maxCourses; ++i) {
                 outFile << students[numStudents - 1].courses[i] << ","
                         << students[numStudents - 1].grades[i] << ",";
             }
-            outFile << "\n";
+            outFile << "\n";    // enter a newline to add next students
             outFile.close();
             cout << "Student added successfully!\n";
         } else {
-            cout << "Unable to open the file for writing!\n";
+            cout << "Error Opening File!\n";
         }
     } else {
         cout << "Maximum number of students reached!\n";
     }
 }
 
-void displayStudents(const Student students[], int numStudents) {
+void displayStudents(Student students[], int numStudents) {     //Struct Student array student, student num and index
     cout << "\nList of Students:\n";
-    for (int i = 0; i < numStudents; ++i) {
+    for (int i = 0; i < numStudents; ++i) {     // for loop iterates through students and print for i lrss than numStudent
         cout << "Name: " << students[i].name << "\n";
         cout << "Registration Number: " << students[i].regNumber << "\n";
         for (int j = 0; j < maxCourses; ++j) {
@@ -146,13 +137,13 @@ void displayStudents(const Student students[], int numStudents) {
 }
 
 void editStudent(Student students[], int numStudents) {
-    char regNum[15];
+    char regNum[15];    // Max 15
     cout << "Enter registration number to edit: ";
     cin >> regNum;
 
-    for (int i = 0; i < numStudents; ++i) {
-        if (strcmp(students[i].regNumber, regNum) == 0) {
-            cin.ignore(); // Clear the input buffer
+    for (int i = 0; i < numStudents; ++i) {     // for loop to iterate through all the students reg
+        if (strcmp(students[i].regNumber, regNum) == 0) {   // compare the reg number proivded through the loop, if match is found
+            cin.ignore(); // Clear the input buffer         // open that line for editing
 
             for (int j = 0; j < maxCourses; ++j) {
                 cout << "Enter new grade for course " << students[i].courses[j] << ": ";
@@ -160,7 +151,7 @@ void editStudent(Student students[], int numStudents) {
                 cin.ignore(); // Clear the input buffer
             }
 
-            ofstream outFile("students.txt");
+            ofstream outFile("students.txt");       // write the changes to the file
             if (outFile.is_open()) {
                 for (int k = 0; k < numStudents; ++k) {
                     outFile << students[k].name << ","
@@ -175,7 +166,7 @@ void editStudent(Student students[], int numStudents) {
                 cout << "Record updated successfully!\n";
                 return;
             } else {
-                cout << "Unable to open the file for writing!\n";
+                cout << "Error Opening File!\n";
                 return;
             }
         }
@@ -189,14 +180,15 @@ void deleteStudent(Student students[], int &numStudents) {
     cin >> regNum;
 
     for (int i = 0; i < numStudents; ++i) {
-        if (strcmp(students[i].regNumber, regNum) == 0) {
-            for (int j = i; j < numStudents - 1; ++j) {
-                students[j] = students[j + 1];
-            }
-            numStudents--;
+        if (strcmp(students[i].regNumber, regNum) == 0) {       // strcmp compare reg number and delete the student afterwards
+            for (int j = i; j < numStudents - 1; ++j) {         // 0 means a matching is found and if reg == 0
+                students[j] = students[j + 1];                  // i is index of found student
+            // j = i and it write the data of the current student by the next student j + 1
+            }                                                   
+            numStudents--;      // student removed so decrement numstudent by 1
 
-            ofstream outFile("students.txt");
-            if (outFile.is_open()) {
+            ofstream outFile("students.txt");   //make an object of the ofstream class named outFile to write data to the file named "students.txt".
+            if (outFile.is_open()) {    
                 for (int k = 0; k < numStudents; ++k) {
                     outFile << students[k].name << ","
                             << students[k].regNumber << ",";
@@ -218,7 +210,7 @@ void deleteStudent(Student students[], int &numStudents) {
     cout << "Student with registration number " << regNum << " not found!\n";
 }
 
-void displayStudentDetails(const Student& student) {
+void displayStudentDetails(const Student& student) {  // pass value by reference to display the actual changes
     cout << "Name: " << student.name << "\n";
     cout << "Registration Number: " << student.regNumber << "\n";
     for (int j = 0; j < maxCourses; ++j) {
@@ -232,7 +224,7 @@ void studentLogin(const Student students[], int numStudents) {
     cin >> regNum;
 
     for (int i = 0; i < numStudents; ++i) {
-        if (strcmp(students[i].regNumber, regNum) == 0) {
+        if (strcmp(students[i].regNumber, regNum) == 0) {   //compare the regnumber with all students
             displayStudentDetails(students[i]); // Function to display student details
             return;
         }
@@ -240,10 +232,10 @@ void studentLogin(const Student students[], int numStudents) {
     cout << "Student with registration number " << regNum << " not found!\n";
 }
 
-void adminFunctionalities(Student students[], int &numStudents) {
+void adminFunctionalities(Student students[], int &numStudents) {      // Struct student, numStudent for student count(total number of student and students at index)
     int adminChoice;
     do {
-        cout << "\nAdmin Functionalities Menu:\n";
+        cout << "\nAdmin Menu:\n";
         cout << "1. Add Student\n";
         cout << "2. Display Students\n";
         cout << "3. Edit Student Record\n";
@@ -252,7 +244,7 @@ void adminFunctionalities(Student students[], int &numStudents) {
         cout << "Enter your choice: ";
         cin >> adminChoice;
 
-        switch (adminChoice) {
+        switch (adminChoice) {      // Access  different functions
             case 1:
                 addStudent(students, numStudents);
                 break;
@@ -274,29 +266,26 @@ void adminFunctionalities(Student students[], int &numStudents) {
     } while (adminChoice != 0);
 }
 
-void readStudentsFromFile(Student students[], int &numStudents) {
-    ifstream inFile("students.txt");
+void readStudentsFromFile(Student students[], int &numStudents) {   //array of student, reference to integer variable
+    ifstream inFile("students.txt");    // Input filestream with object named inFile
     if (inFile.is_open()) {
-        while (numStudents < maxStudents &&
-               inFile.getline(students[numStudents].name, 50, ',') &&
-               inFile.getline(students[numStudents].regNumber, 15, ',')) {
+        while (numStudents < maxStudents && 
+        inFile.getline(students[numStudents].name, 50, ',') && // fetch data from student file /name upto 50 char or comma
+        inFile.getline(students[numStudents].regNumber, 15, ',')) {     // fetch reg no
 
             for (int i = 0; i < maxCourses; ++i) {
-                inFile.getline(students[numStudents].courses[i], 50, ',');
-                inFile >> students[numStudents].grades[i];
-
-                // Ignore commas up to 1000 characters before reading the next item
-                // This is a conservative approach to handle potential long lines
-                inFile.ignore(1000, ',');
+                inFile.getline(students[numStudents].courses[i], 50, ',');      // fetch student courses
+                inFile >> students[numStudents].grades[i];      // fetch student grades
+                inFile.ignore(1000, ',');   // ignore the line until the comma or 1000 char are reached
             }
 
-            ++numStudents;
-            inFile.ignore(1000, '\n'); // Ignore end-of-line
+            ++numStudents;  // increment numstudent to read from next line
+            inFile.ignore(1000, '\n'); // Ignore until 1000 char or new line
         }
 
         inFile.close();
         cout << "Data loaded successfully from file.\n";
     } else {
-        cout << "Unable to open the file for reading!\n";
+        cout << "Error Opening The File!\n";
     }
 }
