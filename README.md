@@ -22,12 +22,12 @@ struct Student {
 };
 
 bool authenticateAdmin();   // Takes Input From User and compare it with the correct login id and password
+void studentLogin(Student students[], int numStudents);       // Takes student reg number as input and compare with the reg number already enrolled
 void addStudent(Student students[], int &numStudents);      // Fucntion for adding student data
 void displayStudents(Student students[], int numStudents);    // Function to disply studen data
 void editStudent(Student students[], int numStudents);       // Function to edit student data
 void deleteStudent(Student students[], int &numStudents);    // Function to delete student data
-void displayStudentDetails(const Student& student);     // Function to dislpay student data
-void studentLogin(const Student students[], int numStudents);       // Takes student reg number as input and compare with the reg number already enrolled
+void displayStudentDetails(Student& student);     // Function to dislpay student data
 void adminFunctionalities(Student students[], int &numStudents);    // Admin choice Menu and other functions called in here
 void readStudentsFromFile(Student students[], int &numStudents);    // Load data from the file named "student.txt"
 
@@ -210,7 +210,7 @@ void deleteStudent(Student students[], int &numStudents) {
     cout << "Student with registration number " << regNum << " not found!\n";
 }
 
-void displayStudentDetails(const Student& student) {  // pass value by reference to display the actual changes
+void displayStudentDetails(Student& student) {  // pass value by reference to display the actual changes
     cout << "Name: " << student.name << "\n";
     cout << "Registration Number: " << student.regNumber << "\n";
     for (int j = 0; j < maxCourses; ++j) {
@@ -218,7 +218,7 @@ void displayStudentDetails(const Student& student) {  // pass value by reference
     }
 }
 
-void studentLogin(const Student students[], int numStudents) {
+void studentLogin(Student students[], int numStudents) {
     char regNum[15];
     cout << "Enter your registration number: ";
     cin >> regNum;
